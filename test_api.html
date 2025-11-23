@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+</head>
+
+<body>
+    <h1>Gemini API Test</h1>
+    <div id="output">Testing...</div>
+    <script>
+        async function testGeminiAPI() {
+            const apiKey = 'AIzaSyAFKH03ODQO-pl3cdVxYyQxngzEKdaS7-Q';
+            // Try the model from the code first
+            const model = 'gemini-2.0-flash';
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{
+                    parts: [{
+                        text: "Hello, are you working?"
+                    }]
+                }]
+            };
+
+            const outputDiv = document.getElementById('output');
+
+            try {
+                outputDiv.textContent = `Testing model: ${model}...`;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.text();
+                    outputDiv.innerHTML = `Error ${response.status}: <pre>${errorData}</pre>`;
+                } else {
+                    const data = await response.json();
+                    outputDiv.textContent = "Success! Response: " + data.candidates[0].content.parts[0].text;
+                }
+            } catch (error) {
+                outputDiv.textContent = "Fetch error: " + error.message;
+            }
+        }
+
+        testGeminiAPI();
+    </script>
+</body>
+
+</html>
